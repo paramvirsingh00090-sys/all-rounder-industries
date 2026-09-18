@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Rounder Industries | Official WiFi CCTV Store</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; }
+
+    header {
+      background: #1e293b; padding: 15px 5%; display: flex;
+      justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100; border-bottom: 2px solid #3b82f6;
+    }
+    .brand-name { font-size: 20px; font-weight: 800; color: #f8fafc; }
+    .brand-name span { color: #3b82f6; }
+    
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .cart-btn {
+      background: #3b82f6; color: white; border: none; padding: 8px 14px;
+      border-radius: 8px; font-weight: bold; cursor: pointer; position: relative; font-size: 13px;
+    }
+    .cart-count {
+      position: absolute; top: -6px; right: -6px; background: #ef4444;
+      color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px;
+    }
+    .admin-toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: bold; }
+
+    .hero {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      text-align: center; padding: 30px 20px; border-bottom: 1px solid #334155;
+    }
+    .hero h1 { font-size: 24px; color: #f8fafc; margin-bottom: 8px; }
+    .hero h1 span { color: #3b82f6; }
+    .hero p { color: #94a3b8; font-size: 13px; max-width: 600px; margin: auto; }
+
+    .container { padding: 25px 5%; max-width: 1200px; margin: auto; }
+    .section-title { font-size: 20px; margin-bottom: 20px; color: #f8fafc; border-left: 4px solid #3b82f6; padding-left: 10px; }
+
+    /* Admin Panel Section */
+    .admin-box {
+      background: #1e293b; border: 2px dashed #3b82f6; border-radius: 12px;
+      padding: 20px; margin-bottom: 30px; display: none;
+    }
+    .admin-box.active { display: block; }
+    .admin-box h3 { color: #38bdf8; margin-bottom: 15px; }
+    .admin-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .admin-form input, .admin-form textarea {
+      padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 13px;
+    }
+    .admin-add-btn { background: #22c55e; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; grid-column: 1 / -1; }
+
+    /* Product Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .card {
+      background: #1e293b; border-radius: 12px; padding: 18px; border: 1px solid #334155;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; color: #f8fafc; }
+    .ssd-tag { background: #1e3a8a; color: #93c5fd; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 11px; display: inline-block; margin-bottom: 10px; }
+    .desc-box { font-size: 12px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4; background: #0f172a; padding: 10px; border-radius: 6px; }
+    
+    .price-box { font-size: 20px; font-weight: 800; color: #38bdf8; margin-bottom: 12px; }
+    .price-box span { font-size: 11px; color: #94a3b8; font-weight: normal; }
+
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn-cart { background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; padding: 9px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; }
+    .btn-buy { background: #3b82f6; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; }
+    .btn-delete { background: #ef4444; color: white; border: none; padding: 5px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-top: 10px; width: 100%; }
+
+    /* Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
+    .modal.active { display: flex; }
+    .modal-content { background: #1e293b; width: 100%; max-width: 480px; border-radius: 12px; padding: 20px; border: 1px solid #475569; position: relative; }
+    .close-btn { position: absolute; top: 12px; right: 15px; background: none; border: none; color: #94a3b8; font-size: 24px; cursor: pointer; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 9px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 13px;
+    }
+    .submit-btn { width: 100%; background: #22c55e; color: white; border: none; padding: 11px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+
+    footer { background: #090d16; text-align: center; padding: 20px; font-size: 12px; color: #64748b; border-top: 1px solid #1e293b; margin-top: 40px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-name">ALL ROUNDER <span>INDUSTRIES</span></div>
+    <div class="nav-actions">
+      <button class="admin-toggle-btn" onclick="toggleAdmin()">⚙️ Owner Panel</button>
+      <button class="cart-btn" onclick="openCheckout()">
+        🛒 Cart <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Maizic WiFi <span>CCTV Camera Store</span></h1>
+    <p>Select your camera package. Full installation and COD available in Jalandhar, Kapurthala & Ludhiana.</p>
+  </section>
+
+  <main class="container">
+    
+    <!-- OWNER/ADMIN ADD PRODUCT PANEL -->
+    <div class="admin-box" id="adminBox">
+      <h3>⚙️ Add New Product (Owner Mode)</h3>
+      <form class="admin-form" onsubmit="addNewProduct(event)">
+        <input type="text" id="pName" placeholder="Camera Name (e.g. Single Lens)" required>
+        <input type="number" id="pPrice" placeholder="Fitting Package Price (₹)" required>
+        <input type="text" id="pSsd" placeholder="SSD Storage (e.g. 8GB High-Speed SSD)" required>
+        <textarea id="pDesc" placeholder="Features & Fitting Details (e.g. Includes Wiring, Night Vision, Mobile Setup)" rows="2" required></textarea>
+        <button type="submit" class="admin-add-btn">+ Add Product to Live Store</button>
+      </form>
+    </div>
+
+    <h2 class="section-title">Available Camera Packages</h2>
+    <div class="grid" id="productGrid"></div>
+  </main>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="modal" id="checkoutModal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+      <h3 style="margin-bottom:12px; color:#f8fafc;">Order Checkout (Cash On Delivery)</h3>
+
+      <div id="cartSummary" style="margin-bottom: 15px; font-size: 12px; color: #38bdf8; background:#0f172a; padding:10px; border-radius:6px;"></div>
+
+      <form onsubmit="handleOrder(event)">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="custName" required placeholder="Enter customer name">
+        </div>
+        <div class="form-group">
+          <label>Mobile Number *</label>
+          <input type="tel" id="custPhone" required pattern="[0-9]{10}" placeholder="10-digit phone number">
+        </div>
+        <div class="form-group">
+          <label>Full Delivery/Fitting Address *</label>
+          <textarea id="custAddress" rows="2" required placeholder="Complete address"></textarea>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="form-group">
+            <label>District *</label>
+            <select id="custDistrict" required>
+              <option value="">Select District</option>
+              <option value="Jalandhar">Jalandhar</option>
+              <option value="Kapurthala">Kapurthala</option>
+              <option value="Ludhiana">Ludhiana</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pincode *</label>
+            <input type="text" id="custPincode" required pattern="[0-9]{6}" placeholder="6-digit pincode">
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Confirm Order (Cash on Delivery)</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p><b>ALL ROUNDER INDUSTRIES</b> — Official WiFi CCTV Sales & Fitting</p>
+    <p style="margin-top:4px;">Direct WhatsApp: +91 9876203654</p>
+  </footer>
+
+  <script>
+    // Initial Default Products
+    let defaultProducts = [
+      { id: 1, name: "Maizic Single Lens WiFi CCTV", price: 2499, ssd: "8GB High-Speed SSD", desc: "1080p HD Video Stream, 2-Way Talk, Power Adapter, Wiring & Complete Mobile Setup." },
+      { id: 2, name: "Maizic Dual Lens WiFi CCTV", price: 3499, ssd: "16GB High-Speed SSD", desc: "Dual Lens View, Color Night Vision, Motion Guard & Complete Fitting Package." },
+      { id: 3, name: "Maizic Triple Lens WiFi CCTV", price: 4499, ssd: "32GB High-Speed SSD", desc: "360 Degree Coverage, Multi-Angle View, Heavy Duty Adapter & App Config." },
+      { id: 4, name: "Maizic 4-in-1 WiFi CCTV Camera", price: 5999, ssd: "32GB High-Speed SSD", desc: "4 View Angle Master Camera, Loud Siren, Weather Protection & Full Setup." },
+      { id: 5, name: "Maizic Indoor WiFi CCTV Camera", price: 1999, ssd: "8GB High-Speed SSD", desc: "Compact Indoor Setup, Motion Detection, Wall Fitting & App Setup." },
+      { id: 6, name: "Maizic Outdoor WiFi CCTV Camera", price: 2999, ssd: "16GB High-Speed SSD", desc: "IP66 Waterproof Body, High-Power Night Vision & Long Cable Fitting." }
+    ];
+
+    // Load from LocalStorage if available
+    let products = JSON.parse(localStorage.getItem('ari_products')) || defaultProducts;
+    let cart = [];
+    let isAdminVisible = false;
+
+    function saveProducts() {
+      localStorage.setItem('ari_products', JSON.stringify(products));
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = products.map(p => `
+        <div class="card">
+          <div>
+            <div class="ssd-tag">💾 Includes ${p.ssd}</div>
+            <div class="card-title">${p.name}</div>
+            <div class="desc-box">
+              <b>Package Includes:</b><br>${p.desc}
+            </div>
+          </div>
+          <div>
+            <div class="price-box">₹${Number(p.price).toLocaleString('en-IN')} <span>(Full Fitting Included)</span></div>
+            <div class="btn-group">
+              <button class="btn-cart" onclick="addToCart(${p.id})">Add to Cart</button>
+              <button class="btn-buy" onclick="buyNow(${p.id})">Buy Now (COD)</button>
+            </div>
+            ${isAdminVisible ? `<button class="btn-delete" onclick="deleteProduct(${p.id})">🗑️ Delete Product (Owner)</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleAdmin() {
+      isAdminVisible = !isAdminVisible;
+      document.getElementById('adminBox').classList.toggle('active');
+      renderProducts();
+    }
+
+    function addNewProduct(e) {
+      e.preventDefault();
+      const newP = {
+        id: Date.now(),
+        name: document.getElementById('pName').value,
+        price: Number(document.getElementById('pPrice').value),
+        ssd: document.getElementById('pSsd').value,
+        desc: document.getElementById('pDesc').value
+      };
+      products.push(newP);
+      saveProducts();
+      e.target.reset();
+      alert('Naya Product Store par Live ho gaya hai!');
+    }
+
+    function deleteProduct(id) {
+      if(confirm('Kya aap is product ko delete karna chahte hain?')) {
+        products = products.filter(p => p.id !== id);
+        saveProducts();
+      }
+    }
+
+    function addToCart(id) {
+      const prod = products.find(p => p.id === id);
+      cart.push(prod);
+      updateCartCount();
+      alert(prod.name + ' Cart me add ho gaya!');
+    }
+
+    function buyNow(id) {
+      const prod = products.find(p => p.id === id);
+      cart = [prod];
+      updateCartCount();
+      openCheckout();
+    }
+
+    function updateCartCount() {
+      document.getElementById('cartCount').innerText = cart.length;
+    }
+
+    function openCheckout() {
+      if(cart.length === 0) return alert('Pehle koi camera select karein!');
+      const summary = document.getElementById('cartSummary');
+      const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+      summary.innerHTML = `<b>Selected Packages (${cart.length}):</b><br>` + 
+        cart.map(i => `• ${i.name} - ₹${i.price}`).join('<br>') +
+        `<br><br><b style="color:#22c55e;">Total Amount: ₹${total.toLocaleString('en-IN')} (COD)</b>`;
+      
+      document.getElementById('checkoutModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('checkoutModal').classList.remove('active');
+    }
+
+    function handleOrder(e) {
+      e.preventDefault();
+      const name = document.getElementById('custName').value;
+      const phone = document.getElementById('custPhone').value;
+      const district = document.getElementById('custDistrict').value;
+
+      alert(`Dhanyawad ${name} bhai! Aapka Order Receive ho gaya hai.\nDistrict: ${district}\nHum ${phone} par call karenge.`);
+      cart = [];
+      updateCartCount();
+      closeModal();
+    }
+
+    renderProducts();
+  </script>
+</body>
+</html>
